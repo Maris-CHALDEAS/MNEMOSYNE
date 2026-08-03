@@ -44,7 +44,7 @@ export const useDialogueStore = defineStore('dialogue', {
                 const {char, ...deltas} = choice.affinity
                 useAffinityStore().adjust(char, deltas)
             }
-            this.lineIndex = nextIndex;
+            this.lineIndex = choice.next;
         }
     }
 })

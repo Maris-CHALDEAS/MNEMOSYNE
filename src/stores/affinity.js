@@ -19,7 +19,7 @@ export const useAffinityStore = defineStore('affinity', {
             if (!this.characters[charId]) {
                 this.characters[charId] = neutral;
             }
-            for (key in delta) {
+            for (let key in delta) {
                 this.characters[charId][key] = (this.characters[charId][key] ?? 0) + delta[key]
             }
         }

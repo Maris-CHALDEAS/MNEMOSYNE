@@ -1,0 +1,65 @@
+<script setup>
+ import bgImg from '@/assets/Chaldea_HQ_Hallway.webp'
+ import { computed } from 'vue'
+ import DialogueBox from '@/components/DialogueBox.vue'
+ import rinHallway2Script from '@/scripts/rinHallway2'
+ import { useDialogueStore  } from '@/stores/dialogue'
+ import { useSceneTransition } from '@/composables/useSceneTransition'
+
+ const store = useDialogueStore();
+ const line = computed(() => store.currentLine)
+
+ // loadScript MUST come before useSceneTransition so ownScriptId is captured correctly
+ store.loadScript('rinHallway2', rinHallway2Script)
+ useSceneTransition()
+</script>
+
+<style scoped>
+.scene {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.sprite {
+  position: absolute;
+  bottom: 0;
+  height: 80vh;
+  z-index: 2;
+}
+
+.sprite.center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.sprite.left {
+  left: 5%;
+}
+.sprite.right {
+  right: 5%;
+}
+</style>
+
+
+<template>
+    <div class="scene">
+        <img class="bg" :src="bgImg" alt="chaldea hallway">
+        <img
+            v-if="line?.sprite"
+            class="sprite"
+            :class="line.spritePos"
+            :src="line.sprite"
+            alt="dialogue"
+        >
+        <DialogueBox />
+    </div>
+</template>

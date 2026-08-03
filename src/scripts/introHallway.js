@@ -50,11 +50,5 @@ export default {
             spritePos: 'right',
         },
     ],
-    nextScene: (affinity) => {
-        const rin = affinity.characters.rin;
-        if( rin.love >= 5 && rin.hate <= 2) return '/rin-love-route-1b'
-        if( rin.love >= 5 && rin.hate >= 3) return '/rin-love-route-1c'
-        if( rin.love <= 3 && rin.hate >= 3) return '/rin-bad-route-1b'
-        return '/rin-neutral'
-    }
+    nextScene: '/RinHallway2'
 }

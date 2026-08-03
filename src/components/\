@@ -13,6 +13,8 @@
         >
           {{ choice.label }}
         </button>
+
+        <button class="test" @click="test">button</button>
       </div>
     </div>
   </div>
