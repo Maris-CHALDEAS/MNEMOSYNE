@@ -5,6 +5,8 @@ export const useDialogueStore = defineStore('dialogue', {
         scriptId: null,
         lineIndex: 0,
         script: [],
+        nextScene: null,
+        finished: false,
     }),
 
     getters: {
@@ -17,15 +19,22 @@ export const useDialogueStore = defineStore('dialogue', {
     },
 
     actions: {
-        loadScript(id, lines) {
+        loadScript(id, scriptData) {
             this.scriptId = id;
-            this.script = lines;
+            this.script = scriptData.lines;
             this.lineIndex = 0;
+            this.nextScene = scriptData.nextScene ?? null;
+            this.finished = false
         },
 
         advance() {
             if (this.currentLine?.choices) return;
-            if (!this.isEnd) this.lineIndex++;
+            if (this.isEnd) {
+                this.lineIndex++;
+                this.finished = true;
+                return;
+            }
+            this.lineIndex++;
         },
 
         choose(nextIndex) {

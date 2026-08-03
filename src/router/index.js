@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
-    { path: '/', name: 'initializer', component: () => import('@/views/Scene.vue') },
-    { path: '/test', name: 'test', component: () => import('@/views/DialogueBox.vue') },
+    { path: '/', name: 'initializer', component: () => import('@/views/scenes/IntroScene.vue') },
+    { path: '/IntroHallway', name: 'IntroHallway', component: () => import('@/views/scenes/IntroHallway.vue') },
 ]
 
 const router = createRouter({

@@ -14,6 +14,8 @@
         >
           {{ choice.label }}
         </button>
+
+        <button class="test" @click="test">button</button>
       </div>
     </div>
   </div>
@@ -84,7 +86,7 @@ function handleClick() {
   color: #7fd4f0;
   font-size: 1.3rem;
   margin: 0.4rem 0;
-  white-space: normal;
+  white-space: pre-line;
   overflow-wrap: break-word;
   overflow: visible;
 }

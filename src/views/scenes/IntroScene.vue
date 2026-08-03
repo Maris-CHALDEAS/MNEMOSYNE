@@ -1,15 +1,18 @@
 <script setup>
- // import bgImg from '@/assets/Chaldea_HQ_outside.webp'
- import bgImg from '@/assets/Chaldea_HQ_Hallway.webp'
+ import bgImg from '@/assets/Chaldea_HQ_outside.webp'
+ // import bgImg from '@/assets/Chaldea_HQ_Hallway.webp'
  import { computed, onMounted } from 'vue'
  import DialogueBox from '@/components/DialogueBox.vue'
  import introScript from '@/scripts/intro'
  import { useDialogueStore  } from '@/stores/dialogue'
+ import { useSceneTransition } from '@/composables/useSceneTransition'
+
 
  const store = useDialogueStore();
  const line = computed(() => store.currentLine)
 
  onMounted(() => store.loadScript('intro', introScript))
+ useSceneTransition()
 </script>
 
 <style scoped>
