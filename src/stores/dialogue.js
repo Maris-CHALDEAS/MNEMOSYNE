@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { useAffinityStore  } from '@/stores/affinity'
+
 
 export const useDialogueStore = defineStore('dialogue', {
     state: () => ({
@@ -37,7 +39,11 @@ export const useDialogueStore = defineStore('dialogue', {
             this.lineIndex++;
         },
 
-        choose(nextIndex) {
+        choose(choice) {
+            if(choice.affinity) {
+                const {char, ...deltas} = choice.affinity
+                useAffinityStore().adjust(char, deltas)
+            }
             this.lineIndex = nextIndex;
         }
     }

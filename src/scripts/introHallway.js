@@ -24,10 +24,11 @@ export default {
             sprite: rinFlustered,
             spritePos: 'right',
             choices: [
-                { label: "Apologize again", next: 3 },
+                { label: "Apologize again", next: 3, affinity: { char: 'rin', love: 2, hate: 1 }},
                 { label: "Say nothing", next: 4 },
             ],
         },
+
         {
             speaker: 'You',
             text: "I really am sorry.",
@@ -36,10 +37,24 @@ export default {
         },
         {
             speaker: 'Rin',
+            text: "Are you going to help me or not?",
+            choices: [
+                { label: "Of course I will.", next: 5, affinity: { char: 'rin', love: 1 } },
+                { label: "Not my problem.",   next: 5, affinity: { char: 'rin', hate: 1 } },
+            ],
+        },
+        {
+            speaker: 'Rin',
             text: "...",
             sprite: rinCasualBlushClose,
             spritePos: 'right',
         },
     ],
-    nextScene: '/IntroHallway'
+    nextScene: (affinity) => {
+        const rin = affinity.characters.rin;
+        if( rin.love >= 5 && rin.hate <= 2) return '/rin-love-route-1b'
+        if( rin.love >= 5 && rin.hate >= 3) return '/rin-love-route-1c'
+        if( rin.love <= 3 && rin.hate >= 3) return '/rin-bad-route-1b'
+        return '/rin-neutral'
+    }
 }

@@ -8,9 +8,9 @@
 
       <div class="choices" v-if="line?.choices">
         <button
-          v-for="(choice, i) in line.choices"
+          v-for="choice in line.choices"
           :key="i"
-          @click.stop="store.choose(choice.next)"
+          @click.stop="store.choose(choice)"
         >
           {{ choice.label }}
         </button>
