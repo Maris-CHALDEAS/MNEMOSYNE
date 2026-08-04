@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { useAffinityStore  } from '@/stores/affinity'
 
-
 export const useDialogueStore = defineStore('dialogue', {
     state: () => ({
         scriptId: null,
