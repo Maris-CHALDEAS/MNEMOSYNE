@@ -1,12 +1,54 @@
 <template>
     <div class="choice-backdrop" v-if="line?.choices"></div>
     <div class="choices selection" v-if="line?.choices">
-        <button
-            v-for="choice in line.choices"
-            @click.stop="store.choose(choice)"
-        >
-            {{ choice.label }}
-        </button>
+        <div class="choice-wrapper" v-for="choice in line.choices" >
+            <button
+                class="choices-btn"
+                @click.stop="store.choose(choice)"
+            >
+                {{ choice.label }}
+            </button>
+            <div class="shard-1 shard">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="shard-2 shard">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="shard-3 shard">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="shard-4 shard">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="shard-5 shard">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="shard-6 shard">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="shard-7 shard">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="shard-8 shard">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
     </div>
     <div class="dialogue-box" @click="handleClick">
         <div class="dialogue-label" v-if="line?.speaker">
@@ -92,11 +134,11 @@
  }
 
  .choice-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 2;
-  }
+     position: fixed;
+     inset: 0;
+     background: rgba(0,0,0,0.6);
+     z-index: 2;
+ }
 
  .dialogue-label {
      display: inline-block;
@@ -144,8 +186,117 @@
      margin-top: 1rem;
  }
 
- .choices button {
+
+ .choice-wrapper {
+     position: relative;
+     display: inline-block;
+ }
+
+ .shard-1 {
+     position: absolute;
+     /* inset: 0; */
+     top: 10px;
+     overflow: visible;
+     pointer-events: none;
+
+     width: 16px;
+     height: 16px;
+
+     clip-path: polygon(
+         50% 0%,
+         100% 50%,
+         50% 100%,
+         0% 50%
+     );
+     opacity: 0;
+     background: linear-gradient(
+         135deg,
+         rgba(255,255,255,.5),
+         rgba(120,200,255,.3),
+         rgba(40,120,255,.1)
+     );
+     backdrop-filter: blur(2px);
+ }
+
+ .choices-btn {
+     appearance: none;
+     border: none;
+     outline: none;
+     background: none;
+
+     /* Layout and dimensions */
+     display: inline-block;
      padding: 0.5rem 1rem;
      cursor: pointer;
+
+     position: relative;
+     overflow: hidden;
+
+     /* Typography */
+     font-family: inherit;
+     font-size: 16px;
+     font-weight: 500;
+     letter-spacing: 0.02em;
+     text-align: center;
+     text-decoration: none;
+
+     /* Decoration & Theming */
+     background: linear-gradient(
+         90deg,
+         rgba(27,58,99,0) 0%,
+         rgba(27,58,99,.2) 5%,
+         rgba(27,58,99,.75) 15%,
+         rgba(27,58,99,.75) 85%,
+         rgba(27,58,99,.2) 95%,
+         rgba(27,58,99,0) 100%
+     );
+     color: #ffffff;
+     /* clip-path: polygon(15% 20%, 85% 20%, 100% 50%, 85% 80%, 15% 80%, 0 50%); */
+     box-shadow:
+         0 2px 8px rgba(0,0,0,.3),
+         inset 0 1px rgba(255,255,255,.15);
+     /* Smooth interaction transition */
+     transition: all 0.2s ease-in-out;
+
  }
+
+ .choices-btn::before {
+     content: '';
+
+     position: absolute;
+     top: 0;
+     left: -150%;
+
+     width: 50%;
+     height: 100%;
+
+     pointer-events: none;
+     background: linear-gradient(
+         90deg,
+         transparent,
+         rgba(255,255,255,0.4),
+         rgba(180,220,255,0.6),
+         rgba(255,255,255,0.4),
+         transparent
+     );
+ }
+@keyframes sweep {
+    from {
+        left: -150%;
+    }
+
+    to {
+        left: 150%;
+    }
+}
+ .choices-btn:hover::before {
+    animation: sweep 400ms ease-out;
+}
+
+ .choice-wrapper:hover .shard-1 {
+     opacity: 1;
+ }
+ /* .choices-btn:hover {
+    transform: scale(1.05);
+    } */
 </style>
