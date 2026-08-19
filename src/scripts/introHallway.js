@@ -8,7 +8,7 @@ export default {
     lines: [
         {
             speaker: 'Rin',
-            text: "I love you, Sakura. I was always watching you, and I always wanted you to smile. ...Yeah. I wanted to believe that the harder it was for me, the easier it would be for you. Because of that...I never even had time to think that anything was painful.",
+            text: "hello i guess",
             sprite: rinAngry,
             spritePos: 'left',
         },

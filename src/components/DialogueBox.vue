@@ -1,4 +1,7 @@
 <template>
+    <div class="top-bar">
+        <button class="save-btn" @click="saveState">save</button>
+    </div>
     <div class="choice-backdrop" v-if="line?.choices"></div>
     <div class="choices selection" v-if="line?.choices">
         <div class="choice-wrapper" v-for="choice in line.choices" >
@@ -9,41 +12,6 @@
                 {{ choice.label }}
             </button>
             <div class="shard-1 shard">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="shard-2 shard">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="shard-3 shard">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="shard-4 shard">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="shard-5 shard">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="shard-6 shard">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="shard-7 shard">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="shard-8 shard">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -61,11 +29,18 @@
 </template>
 
 <script setup>
- import {ref, watch, onUnmounted, computed } from 'vue'
+ import { ref, watch, onUnmounted, computed } from 'vue'
  import { useDialogueStore } from '@/stores/dialogue'
+ import { saveGameState } from '@/stores/save'
+ import { useRoute } from 'vue-router'
+ import { useAffinityStore } from '@/stores/affinity'
 
  const store = useDialogueStore()
  const line = computed(() => store.currentLine)
+
+ const save = saveGameState();
+ const route = useRoute();
+ const affinity = useAffinityStore();
 
  const displayedText = ref('')
  let timer = null
@@ -104,6 +79,10 @@
      } else {
          store.advance()
      }
+ }
+
+ function saveState() {
+     save.saveGame(route.name, store.lineIndex, affinity.characters);
  }
 </script>
 
@@ -280,15 +259,15 @@
          transparent
      );
  }
-@keyframes sweep {
-    from {
-        left: -150%;
-    }
+ @keyframes sweep {
+     from {
+         left: -150%;
+     }
 
-    to {
-        left: 150%;
-    }
-}
+     to {
+         left: 150%;
+     }
+ }
  .choices-btn:hover::before {
     animation: sweep 400ms ease-out;
 }
@@ -296,7 +275,77 @@
  .choice-wrapper:hover .shard-1 {
      opacity: 1;
  }
- /* .choices-btn:hover {
-    transform: scale(1.05);
-    } */
+
+ .top-bar {
+     z-index: 100;
+     position: fixed;
+     top: 0rem;
+     left: 0rem;
+     width: 100%;
+ }
+
+ .save-btn {
+     appearance: none;
+     border: none;
+     outline: none;
+     background: none;
+
+     /* Layout and dimensions */
+     display: inline-block;
+     cursor: pointer;
+
+     position: relative;
+     overflow: hidden;
+
+     /* Typography */
+     font-family: inherit;
+     font-size: 16px;
+     font-weight: 500;
+     letter-spacing: 0.02em;
+     text-align: center;
+     text-decoration: none;
+
+     /* Decoration & Theming */
+     background: linear-gradient(
+         90deg,
+         rgba(27,58,99,0) 0%,
+         rgba(27,58,99,.2) 5%,
+         rgba(27,58,99,.75) 15%,
+         rgba(27,58,99,.75) 85%,
+         rgba(27,58,99,.2) 95%,
+         rgba(27,58,99,0) 100%
+     );
+     color: #ffffff;
+     /* clip-path: polygon(15% 20%, 85% 20%, 100% 50%, 85% 80%, 15% 80%, 0 50%); */
+     box-shadow:
+         0 2px 8px rgba(0,0,0,.3),
+         inset 0 1px rgba(255,255,255,.15);
+     /* Smooth interaction transition */
+     transition: all 0.2s ease-in-out;
+ }
+
+ .save-btn::before {
+     content: '';
+
+     position: absolute;
+     top: 0;
+     left: -150%;
+
+     width: 50%;
+     height: 100%;
+
+     pointer-events: none;
+     background: linear-gradient(
+         90deg,
+         transparent,
+         rgba(255,255,255,0.4),
+         rgba(180,220,255,0.6),
+         rgba(255,255,255,0.4),
+         transparent
+     );
+ }
+
+ .save-btn:hover::before {
+    animation: sweep 400ms ease-out;
+}
 </style>

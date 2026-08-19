@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { saveGameState } from '@/stores/save'
 
 const routes = [
     { path: '/', name: 'initializer', component: () => import('@/views/scenes/IntroScene.vue') },
@@ -11,6 +12,19 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+})
+
+const save = saveGameState();
+
+save.loadGame();
+
+router.beforeEach((to, from) => {
+    if (save.sceneState === null) {
+        return true;
+    }
+    if (to.name !== save.sceneState ) {
+        return { name: save.sceneState };
+    }
 })
 
 export default router

@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 
-
 const neutral = { love: 0, hate: 0 }
 
 export const useAffinityStore = defineStore('affinity', {
@@ -17,7 +16,7 @@ export const useAffinityStore = defineStore('affinity', {
     actions: {
         adjust(charId, delta) {
             if (!this.characters[charId]) {
-                this.characters[charId] = neutral;
+                this.characters[charId] = {...neutral};
             }
             for (let key in delta) {
                 this.characters[charId][key] = (this.characters[charId][key] ?? 0) + delta[key]
