@@ -40,6 +40,7 @@ export const saveGameState = defineStore('save', {
         },
         resetGame() {
             localStorage.removeItem("mnemosyne-save");
+            this.$reset();
         }
     }
 })

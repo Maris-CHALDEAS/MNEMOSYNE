@@ -6,12 +6,16 @@
  import introScript from '@/scripts/intro'
  import { useDialogueStore  } from '@/stores/dialogue'
  import { useSceneTransition } from '@/composables/useSceneTransition'
-
+ import { saveGameState } from '@/stores/save'
+ const save = saveGameState();
 
  const store = useDialogueStore();
  const line = computed(() => store.currentLine)
 
- onMounted(() => store.loadScript('intro', introScript))
+ onMounted(() => {
+     store.loadScript('intro', introScript)
+     store.lineIndex = save.lineIndex
+ })
  useSceneTransition()
 </script>
 

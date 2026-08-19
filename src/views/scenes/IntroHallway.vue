@@ -1,15 +1,21 @@
 <script setup>
  import bgImg from '@/assets/Chaldea_HQ_Hallway.webp'
- import { computed } from 'vue'
+ import { computed, onMounted } from 'vue'
  import DialogueBox from '@/components/DialogueBox.vue'
  import introHallwayScript from '@/scripts/introHallway'
  import { useDialogueStore  } from '@/stores/dialogue'
  import { useSceneTransition } from '@/composables/useSceneTransition'
+ import { saveGameState } from '@/stores/save'
+ const save = saveGameState();
 
  const store = useDialogueStore();
  const line = computed(() => store.currentLine)
 
- store.loadScript('introHallway', introHallwayScript)
+
+ onMounted(() => {
+     store.loadScript('introHallway', introHallwayScript)
+     store.lineIndex = save.lineIndex
+ })
  useSceneTransition()
 </script>
 

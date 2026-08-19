@@ -10,7 +10,16 @@
             </template>
             <p>You want to save your progress??</p>
         </ConfirmationModal>
-        <button class="save-btn" @click="resetState">restart</button>
+        <button class="save-btn" @click="openResetModal">restart</button>
+        <ConfirmationModal :is-open="isResetModalOpen"
+                            @select="resetState"
+                            @close="closeModal"
+        >
+            <template #header>
+                Reset progress?
+            </template>
+            <p>You want to reset your progress??</p>
+        </ConfirmationModal>
     </div>
     <div class="choice-backdrop" v-if="line?.choices"></div>
     <div class="choices selection" v-if="line?.choices">
@@ -42,13 +51,13 @@
  import { ref, watch, onUnmounted, computed } from 'vue'
  import { useDialogueStore } from '@/stores/dialogue'
  import { saveGameState } from '@/stores/save'
- import { useRoute } from 'vue-router'
+ import { useRoute, useRouter } from 'vue-router'
  import { useAffinityStore } from '@/stores/affinity'
  import ConfirmationModal from '@/components/ConfirmationModal.vue'
 
  const store = useDialogueStore()
  const line = computed(() => store.currentLine)
-
+ const router = useRouter();
  const save = saveGameState();
  const route = useRoute();
  const affinity = useAffinityStore();
@@ -59,7 +68,7 @@
  let currentFullText = ''
 
  const isSaveModalOpen = ref(false);
-
+ const isResetModalOpen = ref(false);
 
  function typeText(fullText, speed = 40) {
      clearInterval(timer)
@@ -104,13 +113,20 @@
     isSaveModalOpen.value = true;
  }
 
+ function openResetModal() {
+     isResetModalOpen.value = true;
+
+ }
+
  function closeModal() {
     isSaveModalOpen.value = false;
+    isResetModalOpen.value = false;
  }
 
  function resetState() {
-     localStorage.removeItem('mnemosyne-save')
-     window.location.reload()
+     save.resetGame()
+     closeModal()
+     router.push('/')
  }
 
  onUnmounted(() => clearInterval(timer))
