@@ -37,7 +37,9 @@ export const saveGameState = defineStore('save', {
                 this.lineIndex = curr.lineIndex;
                 this.characters = curr.characters;
             }
-
+        },
+        resetGame() {
+            localStorage.removeItem("mnemosyne-save");
         }
     }
 })

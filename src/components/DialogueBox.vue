@@ -1,10 +1,20 @@
 <template>
     <div class="top-bar">
-        <button class="save-btn" @click="saveState">save</button>
+        <button class="save-btn" @click="openSaveModal">save</button>
+        <ConfirmationModal :is-open="isSaveModalOpen"
+                            @select="saveState"
+                            @close="closeModal"
+        >
+            <template #header>
+                Save progress?
+            </template>
+            <p>You want to save your progress??</p>
+        </ConfirmationModal>
+        <button class="save-btn" @click="resetState">restart</button>
     </div>
     <div class="choice-backdrop" v-if="line?.choices"></div>
     <div class="choices selection" v-if="line?.choices">
-        <div class="choice-wrapper" v-for="choice in line.choices" >
+        <div class="choice-wrapper" v-for="choice in line.choices" :key="choice.label">
             <button
                 class="choices-btn"
                 @click.stop="store.choose(choice)"
@@ -34,6 +44,7 @@
  import { saveGameState } from '@/stores/save'
  import { useRoute } from 'vue-router'
  import { useAffinityStore } from '@/stores/affinity'
+ import ConfirmationModal from '@/components/ConfirmationModal.vue'
 
  const store = useDialogueStore()
  const line = computed(() => store.currentLine)
@@ -46,6 +57,9 @@
  let timer = null
  let isTyping = false
  let currentFullText = ''
+
+ const isSaveModalOpen = ref(false);
+
 
  function typeText(fullText, speed = 40) {
      clearInterval(timer)
@@ -82,8 +96,24 @@
  }
 
  function saveState() {
-     save.saveGame(route.name, store.lineIndex, affinity.characters);
+     save.saveGame(route.path , store.lineIndex, affinity.characters);
+     closeModal()
  }
+
+ function openSaveModal() {
+    isSaveModalOpen.value = true;
+ }
+
+ function closeModal() {
+    isSaveModalOpen.value = false;
+ }
+
+ function resetState() {
+     localStorage.removeItem('mnemosyne-save')
+     window.location.reload()
+ }
+
+ onUnmounted(() => clearInterval(timer))
 </script>
 
 <style scoped>

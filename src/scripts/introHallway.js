@@ -29,7 +29,7 @@ export default {
             ],
         },
 
-        {
+    {
             speaker: 'You',
             text: "I really am sorry.",
             sprite: rinFlustered,

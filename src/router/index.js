@@ -16,15 +16,37 @@ const router = createRouter({
 
 const save = saveGameState();
 
-save.loadGame();
+// save.loadGame();
 
-router.beforeEach((to, from) => {
-    if (save.sceneState === null) {
-        return true;
+router.beforeEach((to) => {
+    if (!save.sceneState) {
+        return true
     }
-    if (to.name !== save.sceneState ) {
-        return { name: save.sceneState };
+
+    // Older saves stored route names (e.g. "IntroHallway"); current saves
+    // store paths (e.g. "/IntroHallway"). Accept both formats.
+    let savedPath
+    try {
+        savedPath = save.sceneState.startsWith('/')
+            ? save.sceneState
+            : router.resolve({ name: save.sceneState }).fullPath
+    } catch {
+        save.sceneState = null
+        return true
     }
+    const savedRoute = router.resolve(savedPath)
+
+    // Do not redirect to a route that no longer exists.
+    if (!savedRoute.matched.length) {
+        save.sceneState = null
+        return true
+    }
+
+    if (to.path === savedRoute.path) {
+        return true
+    }
+
+    return savedRoute.fullPath
 })
 
 export default router
