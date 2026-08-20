@@ -1,87 +1,84 @@
 # MNEMOSYNE
 
-A browser-based visual-novel experience set in the Chaldea universe (Type-Moon / Fate). Land in the Chaldea data center, walk its halls, and talk your way through branching dialogue with Rin Tohsaka — your choices shift her affinity toward you and decide which ending you walk out to.
+A browser-based visual-novel experience set in the Chaldea universe (Type-Moon / Fate). Land in the Chaldea data center, walk its halls, and talk your way through branching dialogue with characters like Mash and Rin — your choices shift their affinity toward you and decide which ending you walk out to.
 
-MNEMOSYNE is the engine + a first scenario. It is *not* a portfolio or a hiring funnel — it is a navigation/date-style experience built purely for vibes, themed around the Chaldea aesthetic.
+MNEMOSYNE is the engine + a set of demo scenarios. It is *not* a portfolio or a hiring funnel — it is a navigation/date-style experience built purely for vibes, themed around the Chaldea aesthetic.
 
-> Built with Vue 3 + Vite + Pinia + Vue Router. No backend. State lives in memory (localStorage planned per the design doc).
+> Built with Vue 3 + Vite + Pinia + Vue Router. No backend. State and saves live in memory and `localStorage`.
 
 ## What it does
 
-- **Cinematic entry** — A Chaldea-style PA announcement sequence greets and authenticates you (`IntroScene`).
-- **Dialogue engine** — A single reusable `DialogueBox.vue` + `useDialogueStore` drive every scene from a plain script object of `{ speaker, text, sprite?, spritePos?, choices? }` lines.
+- **Dialogue engine** — A single reusable `DialogueBox.vue` + `useDialogueStore` drive every scene from a plain script object of `{ speaker, text, sprite?, spritePos?, choices?, background? }` lines.
 - **Typewriter text** — Lines type out character-by-character; click once to skip-reveal, click again to advance.
 - **Branching choices** — Choices can jump to any line index and mutate an `affinity` store (`love` / `hate` per character).
 - **Affinity-driven routing** — A scene's `nextScene` may be a string *or* a function of the live affinity state, so the same scene can route you to a good / neutral / bad ending based on cumulative choices across scenes.
 - **Scene transitions** — `useSceneTransition()` watches the dialogue store and pushes the next route when a script finishes, resolving dynamic targets against current affinity.
-- **Sprite + background rendering** — Each scene composes a fixed background (`Chaldea_HQ_*`) with positioned character sprites (`left` / `center` / `right`).
+- **Persistence** — A robust `save.js` store hooked into Vue Router's navigation guards automatically manages saving your progress, line index, and character affinities to `localStorage`.
+- **Audio Engine** — Background music support managed by `bgmManager.js` with smooth loading and playback integrated directly into the script data.
 
 ## Architecture
 
-```
+```text
 src/
-├── main.js                  # createApp + Pinia + router
-├── App.vue                  # <router-view /> shell
-├── router/index.js          # route-per-scene, lazy-loaded views
+├── main.js                   # createApp + Pinia + router + Save Hydration
+├── App.vue                   # <router-view /> shell
+├── router/index.js           # route-per-scene, handles save-state redirects
 ├── components/
-│   └── DialogueBox.vue      # typewriter text + choice buttons (the only VN UI you need)
+│   ├── DialogueBox.vue       # typewriter text + choice buttons + Modals
+│   └── ConfirmationModal.vue # reusable UI for save/reset/BGM pauses
 ├── composables/
-│   └── useSceneTransition.js # watches dialogue store → router.push(nextScene)
+│   ├── useSceneTransition.js # watches dialogue store → router.push(nextScene)
+│   └── bgmManager.js         # audio playback controller
 ├── stores/
-│   ├── dialogue.js          # script/lineIndex/currentLine/advance/choose
-│   ├── affinity.js          # per-character { love, hate } ledger
-│   └── counter.js           # scaffold (unused in the Rin scenario)
-├── scripts/                 # plain data objects — the actual "game content"
-│   ├── intro.js             # PA announcement sequence → /IntroHallway
-│   ├── introHallway.js      # first Rin encounter → /RinHallway2
-│   └── rinHallway2.js       # branching Rin hallway, function-routed ending
+│   ├── dialogue.js           # script/lineIndex/currentLine/advance/choose
+│   ├── affinity.js           # per-character { love, hate } ledger
+│   └── save.js               # localStorage persistence logic
+├── scripts/                  # plain data objects — the actual "game content"
+│   ├── sceneTemplate.js      # base template for building new scenes
+│   ├── demoArrival.js        # Current demo route flow
+│   ├── demoBriefing.js
+│   ├── demoHallway.js
+│   ├── demoObservation.js
+│   └── demoDecision.js       # Calculates final affinity for the ending
 └── views/scenes/             # one .vue per route; loads a script + renders bg/sprite/DialogueBox
-    ├── IntroScene.vue
-    ├── IntroHallway.vue
-    ├── RinHallway2.vue
-    ├── RinGoodEnd.vue
-    └── RinBadEnd.vue
+    ├── DemoArrival.vue
+    ├── DemoBriefing.vue
+    ├── DemoDecision.vue
+    └── ...
 ```
 
 ### The script contract
 
-A script is a single exported object:
+A script is a single exported object. It acts as a Domain-Specific Language (DSL) that defines the scene without touching UI logic:
 
 ```js
+import characterNeutral from '@/assets/sprites/rin/rin-normal.png'
+import background from '@/assets/Chaldea_HQ_Hallway.webp'
+
 export default {
-  lines: [
-    { speaker: 'Rin', text: '...', sprite: rinSprite, spritePos: 'left' },
-    { speaker: 'Rin', text: '...', sprite: rinSprite, spritePos: 'left',
-      choices: [
-        { label: 'Walk with her.', next: 3, affinity: { char: 'rin', love: 1 } },
-        { label: 'You can manage.', next: 7, affinity: { char: 'rin', hate: 1 } },
-      ] },
-  ],
-  nextScene: '/RinHallway2'                // static string, OR
-  nextScene: (affinity) => isGood(affinity) ? '/rin-good-end' : '/rin-bad-end'
+    bgMusic: '/assets/bgms/bgm.mp3', // Optional BGM
+    lines: [
+        {
+            speaker: 'Character',
+            text: 'Choose your response.',
+            sprite: characterNeutral,
+            spritePos: 'left',
+            background,
+            choices: [
+                { label: 'Kind response', next: 2, affinity: { char: 'rin', love: 1 } },
+                { label: 'Cold response', next: 2, affinity: { char: 'rin', hate: 1 } },
+            ],
+        },
+    ],
+    // Dynamic routing based on cumulative affinity
+    nextScene: (affinity) => {
+        const character = affinity.characters.rin ?? { love: 0, hate: 0 }
+        return character.love > character.hate ? '/rin-good-end' : '/rin-bad-end'
+    },
 }
 ```
 
-Adding a new scene is "new script + new view that calls `store.loadScript(...)` + `useSceneTransition()`" — no engine code changes. Choices, affinity deltas, and routing all live in the data, not the components.
-
-### Current scenario flow
-
-```
-/ (IntroScene)  ──PA announcement──►  /IntroHallway  ──first Rin talk──►  /RinHallway2
-                                                                          │
-                          affinity-based nextScene(affinity) ─────────────┤
-                                                                          ├─► /rin-good-end
-                                                                          ├─► /rin-neutral-end  (planned)
-                                                                          └─► /rin-bad-end
-```
-
-`rinHallway2.js` contains four choice points (walk/ditch, promise/no-promise, apologise/walk-faster, will-be-here/maybe/can't) whose cumulative `love`/`hate` totals pick the ending.
-
-## Design notes
-
-- **Data over code.** All branching logic, affinity deltas and routing decisions live in script objects. The engine (`DialogueBox`, `dialogue` store, `useSceneTransition`) is character-agnostic and reusable for any future character.
-- **Mechanics derived from canon.** Per the concept doc, a character's gate mechanic should come from their actual in-universe powers — e.g. the planned BB reject-loop draws on her time control. Not every marker needs a special mechanic.
-- **Fan project.** Sprites and assets are FGO-derived fan material for personal use.
+Adding a new scene is "new script + new view that calls `store.loadScript(...)` + `useSceneTransition()`" — no engine code changes. Choices, affinity deltas, audio, and routing all live in the data.
 
 ## Project setup
 
@@ -90,70 +87,39 @@ npm install
 ```
 
 ### Develop (hot-reload)
-
 ```sh
 npm run dev
 ```
 
 ### Build for production
-
 ```sh
 npm run build
-```
-
-### Preview the production build
-
-```sh
 npm run preview
 ```
 
-### Run unit tests with [Vitest](https://vitest.dev/)
-
+### Run tests
 ```sh
-npm run test:unit
+npm run test:unit  # Vitest
 ```
 
-### Run end-to-end tests with [Playwright](https://playwright.dev)
-
+### End-to-end tests (Playwright)
 ```sh
-# First run: install browsers
 npx playwright install
-
-# On CI, build first
 npm run build
 npm run test:e2e
-# Chromium only
-npm run test:e2e -- --project=chromium
-# Single file
-npm run test:e2e -- tests/example.spec.js
-# Debug mode
-npm run test:e2e -- --debug
 ```
 
 ### Lint and format
-
 ```sh
 npm run lint      # oxlint + eslint, both with --fix
 npm run format    # oxfmt on src/
 ```
 
-## Recommended editor / browser setup
-
-- **Editor:** [VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (disable Vetur).
-- **Chromium browsers:** [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) — also enable *Custom Object Formatter* in DevTools.
-- **Firefox:** [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/).
-
-Tooling config: `vite.config.js`, `vitest.config.js`, `playwright.config.js`, `eslint.config.js`, `.oxlintrc.json`, `.oxfmtrc.json`, `.editorconfig`.
-
-**Node requirement:** `^22.18.0 || >=24.12.0`.
-
 ## Roadmap
 
-Per the concept doc, the near-term plan is:
-
-1. Generalise the engine and add Mash (hub navigator) + Ritsuka / masterrecord.
-2. Expand marker by marker — each new character's mechanic chosen from their canon kit.
-3. localStorage persistence: `mash_intro_seen`, per-project rejection counts, per-project visited flags.
+1. **Rich Text Formatting:** Update the dialogue renderer to support inline styling (bold, italics, colored text, shaking animations).
+2. **GUI Authoring Tool:** Build a visual node-based editor to generate the `script.js` files, eliminating the need for manual JSON/JS data entry.
+3. **Expand Scenarios:** Expand marker by marker — each new character's mechanic chosen from their canon kit (e.g. BB reject-loop).
 
 ---
 
