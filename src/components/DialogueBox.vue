@@ -11,6 +11,9 @@
             <p>You want to save your progress??</p>
         </ConfirmationModal>
         <button class="save-btn" @click="openResetModal">restart</button>
+        <button class="save-btn" @click="openBgmModal">
+            {{ isBgmPaused ? 'resume bgm' : 'pause bgm' }}
+        </button>
         <ConfirmationModal :is-open="isResetModalOpen"
                             @select="resetState"
                             @close="closeModal"
@@ -19,6 +22,15 @@
                 Reset progress?
             </template>
             <p>You want to reset your progress??</p>
+        </ConfirmationModal>
+        <ConfirmationModal :is-open="isBgmModalOpen"
+                           @select="toggleBgm"
+                           @close="closeModal"
+        >
+            <template #header>
+                {{ isBgmPaused ? 'Resume BGM?' : 'Pause BGM?' }}
+            </template>
+            <p>{{ isBgmPaused ? 'Resume the background music?' : 'Pause the background music?' }}</p>
         </ConfirmationModal>
     </div>
     <div class="choice-backdrop" v-if="line?.choices"></div>
@@ -75,6 +87,8 @@
 
  const isSaveModalOpen = ref(false);
  const isResetModalOpen = ref(false);
+ const isBgmModalOpen = ref(false);
+ const isBgmPaused = ref(false);
 
  function typeText(fullText, speed = 40) {
      clearInterval(timer)
@@ -106,7 +120,7 @@
          if (!bgMusic.value) return;
          console.log(bgMusic.value);
          await gameAudio.loadMusic(bgMusic.value);
-         gameAudio.playBackgroundMusic();
+         await gameAudio.playBackgroundMusic();
      } catch (error) {
          console.log(error);
      }
@@ -141,9 +155,24 @@
      isResetModalOpen.value = true;
  }
 
+ function openBgmModal() {
+     isBgmModalOpen.value = true;
+ }
+
+ async function toggleBgm() {
+     if (isBgmPaused.value) {
+         await gameAudio.resumeBackgroundMusic();
+     } else {
+         await gameAudio.pauseBackgroundMusic();
+     }
+     isBgmPaused.value = gameAudio.isPaused;
+     closeModal()
+ }
+
  function closeModal() {
     isSaveModalOpen.value = false;
     isResetModalOpen.value = false;
+    isBgmModalOpen.value = false;
  }
 
  function resetState() {
@@ -152,7 +181,10 @@
      router.push('/')
  }
 
- onUnmounted(() => clearInterval(timer))
+ onUnmounted(() => {
+     clearInterval(timer)
+     gameAudio.stop()
+ })
 </script>
 
 <style scoped>

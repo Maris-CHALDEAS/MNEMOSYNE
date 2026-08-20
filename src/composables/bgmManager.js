@@ -15,12 +15,9 @@ class GameAudioEngine {
         this.audioBuffer = await this.ctx.decodeAudioData(arrayBuffer);
     }
 
-    playBackgroundMusic() {
-        if(this.ctx.state === 'suspended') {
-            this.ctx.resume();
-        }
-
-        console.log(this.audioBuffer);
+    async playBackgroundMusic() {
+        if (!this.ctx || !this.audioBuffer) return;
+        if (this.ctx.state === 'suspended') await this.ctx.resume();
 
         this.stop();
 
@@ -31,6 +28,18 @@ class GameAudioEngine {
         this.sourceNode.loopEnd = this.audioBuffer.duration;
         this.sourceNode.connect(this.ctx.destination);
         this.sourceNode.start(0);
+    }
+
+    async pauseBackgroundMusic() {
+        if (this.ctx?.state === 'running') await this.ctx.suspend();
+    }
+
+    async resumeBackgroundMusic() {
+        if (this.ctx?.state === 'suspended') await this.ctx.resume();
+    }
+
+    get isPaused() {
+        return this.ctx?.state === 'suspended';
     }
 
     stop() {

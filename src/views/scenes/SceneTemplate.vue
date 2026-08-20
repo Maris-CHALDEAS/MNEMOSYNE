@@ -15,20 +15,24 @@
 <script setup>
 import { ref, watch } from 'vue'
 import DialogueBox from '@/components/DialogueBox.vue'
-import sceneScript from '@/scripts/sceneTemplate'
 import { useDialogueStore } from '@/stores/dialogue'
 import { useSceneTransition } from '@/composables/useSceneTransition'
 import { saveGameState } from '@/stores/save'
 
+const props = defineProps({
+    script: { type: Object, required: true },
+    scriptId: { type: String, required: true },
+})
+
 const save = saveGameState()
 const store = useDialogueStore()
-const currentBg = ref(sceneScript.lines[0]?.background ?? null)
+const currentBg = ref(props.script.lines[0]?.background ?? null)
 const currentSprite = ref(null)
 const currentSpritePos = ref('')
 
 // Load before mounting DialogueBox so scene-level values such as bgMusic
 // are already available to shared components.
-store.loadScript('sceneTemplate', sceneScript)
+store.loadScript(props.scriptId, props.script)
 store.lineIndex = save.lineIndex
 
 watch(() => store.currentLine, (line) => {
