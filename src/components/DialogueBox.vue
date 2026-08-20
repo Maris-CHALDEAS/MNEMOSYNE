@@ -54,6 +54,7 @@
  import { useRoute, useRouter } from 'vue-router'
  import { useAffinityStore } from '@/stores/affinity'
  import ConfirmationModal from '@/components/ConfirmationModal.vue'
+ import { GameAudioEngine } from '@/composables/bgmManager'
 
  const store = useDialogueStore()
  const line = computed(() => store.currentLine)
@@ -61,6 +62,11 @@
  const save = saveGameState();
  const route = useRoute();
  const affinity = useAffinityStore();
+
+ const bgMusic = computed(() => store.currentBgMusic)
+
+
+ let firstClick = false;
 
  const displayedText = ref('')
  let timer = null
@@ -94,7 +100,25 @@
      { immediate: true }
  )
 
+ const gameAudio = new GameAudioEngine();
+ async function startMusic() {
+     try {
+         if (!bgMusic.value) return;
+         console.log(bgMusic.value);
+         await gameAudio.loadMusic(bgMusic.value);
+         gameAudio.playBackgroundMusic();
+     } catch (error) {
+         console.log(error);
+     }
+ }
+ watch(bgMusic, (newMusic) => {
+     console.log('BGM changed:', newMusic)
+ }, { immediate: true })
  function handleClick() {
+     if (!firstClick && bgMusic.value) {
+         startMusic();
+         firstClick = true;
+     }
      if (isTyping) {
          clearInterval(timer)
          displayedText.value = currentFullText;
@@ -115,7 +139,6 @@
 
  function openResetModal() {
      isResetModalOpen.value = true;
-
  }
 
  function closeModal() {

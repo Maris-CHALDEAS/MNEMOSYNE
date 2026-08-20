@@ -12,10 +12,8 @@
  const store = useDialogueStore();
  const line = computed(() => store.currentLine)
 
- onMounted(() => {
      store.loadScript('intro', introScript)
      store.lineIndex = save.lineIndex
- })
  useSceneTransition()
 </script>
 

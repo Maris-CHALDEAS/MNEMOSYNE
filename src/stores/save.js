@@ -18,10 +18,13 @@ export const saveGameState = defineStore('save', {
 
     actions: {
         saveGame(pathName, lineIndex, characters) {
+            // Accept either affinity.characters or the complete affinity
+            // store state, but persist one consistent shape.
+            const characterState = characters?.characters ?? characters ?? {};
             this.sceneState = pathName;
             this.lineIndex = lineIndex;
-            this.characters = {...characters};
-            let temp = {sceneState : this.sceneState, lineIndex :this.lineIndex, characters :this.characters}
+            this.characters = JSON.parse(JSON.stringify(characterState));
+            let temp = {sceneState: this.sceneState, lineIndex: this.lineIndex, characters: this.characters}
             let curr = JSON.stringify(temp);
             localStorage.setItem("mnemosyne-save", curr);
         },
@@ -35,7 +38,9 @@ export const saveGameState = defineStore('save', {
                 curr = JSON.parse(curr);
                 this.sceneState = curr.sceneState;
                 this.lineIndex = curr.lineIndex;
-                this.characters = curr.characters;
+                // Support older saves that accidentally persisted the whole
+                // affinity store under characters.characters.
+                this.characters = curr.characters?.characters ?? curr.characters ?? {};
             }
         },
         resetGame() {

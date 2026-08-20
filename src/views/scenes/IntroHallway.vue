@@ -28,10 +28,8 @@
      }
  }, { immediate: true })
 
- onMounted(() => {
      store.loadScript('introHallway', introHallwayScript)
      store.lineIndex = save.lineIndex
- })
  useSceneTransition()
 </script>
 
