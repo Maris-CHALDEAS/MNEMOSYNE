@@ -118,16 +118,12 @@
  async function startMusic() {
      try {
          if (!bgMusic.value) return;
-         console.log(bgMusic.value);
          await gameAudio.loadMusic(bgMusic.value);
          await gameAudio.playBackgroundMusic();
      } catch (error) {
          console.log(error);
      }
  }
- watch(bgMusic, (newMusic) => {
-     console.log('BGM changed:', newMusic)
- }, { immediate: true })
  function handleClick() {
      if (!firstClick && bgMusic.value) {
          startMusic();

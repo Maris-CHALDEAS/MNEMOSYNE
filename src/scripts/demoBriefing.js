@@ -1,7 +1,9 @@
 import aozaki from '@/assets/sprites/aozaki/AKI_T01A.png'
 import background from '@/assets/backgrounds/BG_03A.jpg'
+import bgMusic from './demoBgm'
 
 export default {
+    bgMusic,
     lines: [
         { speaker: 'Aozaki', text: '[SCENE 02 • INSERT BRIEFING DIALOGUE]', sprite: aozaki, spritePos: 'right', background },
         {

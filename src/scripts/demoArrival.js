@@ -1,7 +1,9 @@
 import mash from '@/assets/sprites/mash/st_face_0020_000.png'
 import background from '@/assets/backgrounds/BG_01A.jpg'
+import bgMusic from './demoBgm'
 
 export default {
+    bgMusic,
     lines: [
         { speaker: 'Mash', text: '[SCENE 01 • INSERT ARRIVAL DIALOGUE]', sprite: mash, spritePos: 'left', background },
         {

@@ -1,23 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { saveGameState } from '@/stores/save'
-import SceneTemplate from '@/views/scenes/SceneTemplate.vue'
-import demoArrival from '@/scripts/demoArrival'
-import demoBriefing from '@/scripts/demoBriefing'
-import demoHallway from '@/scripts/demoHallway'
-import demoObservation from '@/scripts/demoObservation'
-import demoDecision from '@/scripts/demoDecision'
 
 const routes = [
-    { path: '/', name: 'initializer', component: () => import('@/views/scenes/IntroScene.vue') },
-    { path: '/IntroHallway', name: 'IntroHallway', component: () => import('@/views/scenes/IntroHallway.vue') },
-    { path: '/RinHallway2',  name: 'RinHallway2',  component: () => import('@/views/scenes/RinHallway2.vue') },
+    { path: '/', name: 'DemoArrival', component: () => import('@/views/scenes/DemoArrival.vue') },
+    { path: '/demo/arrival', name: 'DemoArrivalDirect', component: () => import('@/views/scenes/DemoArrival.vue') },
+    { path: '/demo/briefing', name: 'DemoBriefing', component: () => import('@/views/scenes/DemoBriefing.vue') },
+    { path: '/demo/hallway', name: 'DemoHallway', component: () => import('@/views/scenes/DemoHallway.vue') },
+    { path: '/demo/observation', name: 'DemoObservation', component: () => import('@/views/scenes/DemoObservation.vue') },
+    { path: '/demo/decision', name: 'DemoDecision', component: () => import('@/views/scenes/DemoDecision.vue') },
     { path: '/rin-good-end', name: 'RinGoodEnd',   component: () => import('@/views/scenes/RinGoodEnd.vue') },
     { path: '/rin-bad-end',  name: 'RinBadEnd',    component: () => import('@/views/scenes/RinBadEnd.vue') },
-    { path: '/demo/arrival', name: 'DemoArrival', component: SceneTemplate, props: { script: demoArrival, scriptId: 'demoArrival' } },
-    { path: '/demo/briefing', name: 'DemoBriefing', component: SceneTemplate, props: { script: demoBriefing, scriptId: 'demoBriefing' } },
-    { path: '/demo/hallway', name: 'DemoHallway', component: SceneTemplate, props: { script: demoHallway, scriptId: 'demoHallway' } },
-    { path: '/demo/observation', name: 'DemoObservation', component: SceneTemplate, props: { script: demoObservation, scriptId: 'demoObservation' } },
-    { path: '/demo/decision', name: 'DemoDecision', component: SceneTemplate, props: { script: demoDecision, scriptId: 'demoDecision' } },
 ]
 
 const router = createRouter({

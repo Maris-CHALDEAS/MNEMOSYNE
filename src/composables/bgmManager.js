@@ -10,6 +10,9 @@ class GameAudioEngine {
         if (!this.ctx) this.ctx = new this.AudioContext();
 
         const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`BGM request failed: ${response.status} ${response.statusText}`);
+        }
         const arrayBuffer = await response.arrayBuffer();
 
         this.audioBuffer = await this.ctx.decodeAudioData(arrayBuffer);

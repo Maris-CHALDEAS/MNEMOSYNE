@@ -1,7 +1,9 @@
 import rin from '@/assets/sprites/rin/rin-normal.png'
 import background from '@/assets/backgrounds/BG_05A.jpg'
+import bgMusic from './demoBgm'
 
 export default {
+    bgMusic,
     lines: [
         { speaker: 'Rin', text: '[SCENE 03 • INSERT HALLWAY ENCOUNTER]', sprite: rin, spritePos: 'left', background },
         {
