@@ -2,15 +2,18 @@ import rinAngry from '@/assets/sprites/rin/rin-angry.png'
 import rinFlustered from '@/assets/sprites/rin/rin-flustered.png'
 import rinNormal from '@/assets/sprites/rin/rin-normal.png'
 import rinCasualBlushClose from '@/assets/sprites/rin/rin-casual-06b-blush-close.png'
-
+import hallways from '@/assets/Chaldea_HQ_Hallway.webp'
+import outside from '@/assets/Chaldea_HQ_outside.webp'
 
 export default {
+    backgroundMusic: 'hello',
     lines: [
         {
             speaker: 'Rin',
             text: "hello i guess",
             sprite: rinAngry,
             spritePos: 'left',
+            background: hallways,
         },
         {
             speaker: 'You',
@@ -34,6 +37,7 @@ export default {
             text: "I really am sorry.",
             sprite: rinFlustered,
             spritePos: 'right',
+            background: outside,
         },
         {
             speaker: 'Rin',
@@ -48,7 +52,8 @@ export default {
             text: "...",
             sprite: rinCasualBlushClose,
             spritePos: 'right',
+            background: hallways,
         },
     ],
-    nextScene: '/RinHallway2'
+    nextScene: '/RinHallway2',
 }

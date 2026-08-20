@@ -1,6 +1,6 @@
 <script setup>
- import bgImg from '@/assets/Chaldea_HQ_Hallway.webp'
- import { computed, onMounted } from 'vue'
+ import defaultBg from '@/assets/Chaldea_HQ_Hallway.webp'
+ import { computed, onMounted, ref, watch} from 'vue'
  import DialogueBox from '@/components/DialogueBox.vue'
  import introHallwayScript from '@/scripts/introHallway'
  import { useDialogueStore  } from '@/stores/dialogue'
@@ -10,7 +10,23 @@
 
  const store = useDialogueStore();
  const line = computed(() => store.currentLine)
+ const bgMusic = computed(() => store.currentBgMusic)
 
+ const currentBg = ref(defaultBg);
+ const currentSprite = ref(null);
+ const currentSpritePos = ref('');
+
+ watch(line, (newLine) => {
+     if (newLine?.background) {
+         currentBg.value = newLine.background
+     }
+     if (newLine?.sprite !== undefined) {
+         currentSprite.value = newLine.sprite
+     }
+     if (newLine?.spritePos !== undefined) {
+         currentSpritePos.value = newLine.spritePos
+     }
+ }, { immediate: true })
 
  onMounted(() => {
      store.loadScript('introHallway', introHallwayScript)
@@ -61,12 +77,12 @@ button {
 
 <template>
     <div class="scene">
-        <img class="bg" :src="bgImg" alt="chaldea hallway">
+        <img class="bg" :src="currentBg" :key="currentBg" alt="chaldea hallway">
         <img
-            v-if="line?.sprite"
+            v-if="currentSprite"
             class="sprite"
-            :class="line.spritePos"
-            :src="line.sprite"
+            :class="currentSpritePos"
+            :src="currentSprite"
             alt="dialogue"
         >
         <DialogueBox />

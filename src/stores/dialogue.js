@@ -8,6 +8,7 @@ export const useDialogueStore = defineStore('dialogue', {
         script: [],
         nextScene: null,
         finished: false,
+        bgMusic: null,
     }),
 
     getters: {
@@ -17,6 +18,9 @@ export const useDialogueStore = defineStore('dialogue', {
         isEnd(state) {
             return state.lineIndex >= state.script.length -1;
         },
+        currentBgMusic(state) {
+            return state.bgMusic || null;
+        }
     },
 
     actions: {
@@ -25,7 +29,8 @@ export const useDialogueStore = defineStore('dialogue', {
             this.script = scriptData.lines;
             this.lineIndex = 0;
             this.nextScene = scriptData.nextScene ?? null;
-            this.finished = false
+            this.finished = false;
+            this.bgMusic = scriptData.bgMusic;
         },
 
         advance() {
