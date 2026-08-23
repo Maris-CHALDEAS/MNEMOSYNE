@@ -2,14 +2,14 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { saveGameState } from '@/stores/save'
 
 const routes = [
-    { path: '/', name: 'DemoArrival', component: () => import('@/views/scenes/DemoArrival.vue') },
-    { path: '/demo/arrival', name: 'DemoArrivalDirect', component: () => import('@/views/scenes/DemoArrival.vue') },
-    { path: '/demo/briefing', name: 'DemoBriefing', component: () => import('@/views/scenes/DemoBriefing.vue') },
-    { path: '/demo/hallway', name: 'DemoHallway', component: () => import('@/views/scenes/DemoHallway.vue') },
-    { path: '/demo/observation', name: 'DemoObservation', component: () => import('@/views/scenes/DemoObservation.vue') },
-    { path: '/demo/decision', name: 'DemoDecision', component: () => import('@/views/scenes/DemoDecision.vue') },
-    { path: '/rin-good-end', name: 'RinGoodEnd',   component: () => import('@/views/scenes/RinGoodEnd.vue') },
-    { path: '/rin-bad-end',  name: 'RinBadEnd',    component: () => import('@/views/scenes/RinBadEnd.vue') },
+    { path: '/', name: 'Home', component: () => import('@/views/home/Home.vue') },
+    { path: '/demo/arrival', name: 'DemoArrivalDirect', component: () => import('@/views/demo/scenes/Arrival.vue') },
+    { path: '/demo/briefing', name: 'DemoBriefing', component: () => import('@/views/demo/scenes/Briefing.vue') },
+    { path: '/demo/hallway', name: 'DemoHallway', component: () => import('@/views/demo/scenes/Hallway.vue') },
+    { path: '/demo/observation', name: 'DemoObservation', component: () => import('@/views/demo/scenes/Observation.vue') },
+    { path: '/demo/decision', name: 'DemoDecision', component: () => import('@/views/demo/scenes/Decision.vue') },
+    { path: '/rin-good-end', name: 'RinGoodEnd', component: () => import('@/views/demo/scenes/RinGoodEnd.vue') },
+    { path: '/rin-bad-end', name: 'RinBadEnd', component: () => import('@/views/demo/scenes/RinBadEnd.vue') },
 ]
 
 const router = createRouter({

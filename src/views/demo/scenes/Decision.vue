@@ -1,5 +1,5 @@
 <script setup>
-import SceneTemplate from './SceneTemplate.vue'
+import SceneTemplate from '../template.vue'
 import script from '@/scripts/demoDecision'
 </script>
 

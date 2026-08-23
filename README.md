@@ -1,10 +1,10 @@
 # MNEMOSYNE
 
-A browser-based visual-novel experience set in the Chaldea universe (Type-Moon / Fate). Land in the Chaldea data center, walk its halls, and talk your way through branching dialogue with characters like Mash and Rin — your choices shift their affinity toward you and decide which ending you walk out to.
+A browser-based visual novel set in the Chaldea universe (Type-Moon / Fate). Explore the facility, read branching dialogue, and make choices that change Rin's affinity and determine the ending.
 
-MNEMOSYNE is the engine + a set of demo scenarios. It is *not* a portfolio or a hiring funnel — it is a navigation/date-style experience built purely for vibes, themed around the Chaldea aesthetic.
+MNEMOSYNE contains both the reusable dialogue engine and its demo scenarios. It has no backend; progress is restored from `localStorage`.
 
-> Built with Vue 3 + Vite + Pinia + Vue Router. No backend. State and saves live in memory and `localStorage`.
+> Built with Vue 3, Vite, Pinia, and Vue Router.
 
 ## What it does
 
@@ -13,8 +13,8 @@ MNEMOSYNE is the engine + a set of demo scenarios. It is *not* a portfolio or a 
 - **Branching choices** — Choices can jump to any line index and mutate an `affinity` store (`love` / `hate` per character).
 - **Affinity-driven routing** — A scene's `nextScene` may be a string *or* a function of the live affinity state, so the same scene can route you to a good / neutral / bad ending based on cumulative choices across scenes.
 - **Scene transitions** — `useSceneTransition()` watches the dialogue store and pushes the next route when a script finishes, resolving dynamic targets against current affinity.
-- **Persistence** — A robust `save.js` store hooked into Vue Router's navigation guards automatically manages saving your progress, line index, and character affinities to `localStorage`.
-- **Audio Engine** — Background music support managed by `bgmManager.js` with smooth loading and playback integrated directly into the script data.
+- **Persistence** — The save store restores the current scene, line index, and character affinities from the `mnemosyne-save` `localStorage` entry.
+- **Audio** — `bgmManager.js` loads and loops scene BGM through the Web Audio API. Browsers may require user interaction before playback starts.
 
 ## Architecture
 
@@ -22,7 +22,7 @@ MNEMOSYNE is the engine + a set of demo scenarios. It is *not* a portfolio or a 
 src/
 ├── main.js                   # createApp + Pinia + router + Save Hydration
 ├── App.vue                   # <router-view /> shell
-├── router/index.js           # route-per-scene, handles save-state redirects
+├── router/index.js           # route-per-scene and save-state redirects
 ├── components/
 │   ├── DialogueBox.vue       # typewriter text + choice buttons + Modals
 │   └── ConfirmationModal.vue # reusable UI for save/reset/BGM pauses
@@ -33,18 +33,22 @@ src/
 │   ├── dialogue.js           # script/lineIndex/currentLine/advance/choose
 │   ├── affinity.js           # per-character { love, hate } ledger
 │   └── save.js               # localStorage persistence logic
-├── scripts/                  # plain data objects — the actual "game content"
+├── scripts/                  # plain data objects: the actual game content
 │   ├── sceneTemplate.js      # base template for building new scenes
 │   ├── demoArrival.js        # Current demo route flow
 │   ├── demoBriefing.js
 │   ├── demoHallway.js
 │   ├── demoObservation.js
 │   └── demoDecision.js       # Calculates final affinity for the ending
-└── views/scenes/             # one .vue per route; loads a script + renders bg/sprite/DialogueBox
-    ├── DemoArrival.vue
-    ├── DemoBriefing.vue
-    ├── DemoDecision.vue
-    └── ...
+└── views/
+    ├── home/Home.vue         # story library
+    └── demo/
+        ├── template.vue      # shared demo scene template
+        └── scenes/            # demo scene views
+            ├── Arrival.vue
+            ├── Briefing.vue
+            ├── Decision.vue
+            └── ...
 ```
 
 ### The script contract
@@ -53,10 +57,11 @@ A script is a single exported object. It acts as a Domain-Specific Language (DSL
 
 ```js
 import characterNeutral from '@/assets/sprites/rin/rin-normal.png'
-import background from '@/assets/Chaldea_HQ_Hallway.webp'
+import background from '@/assets/backgrounds/Chaldea_HQ_Hallway.webp'
+import bgMusic from './demoBgm'
 
 export default {
-    bgMusic: '/assets/bgms/bgm.mp3', // Optional BGM
+    bgMusic, // Optional BGM
     lines: [
         {
             speaker: 'Character',
@@ -78,7 +83,15 @@ export default {
 }
 ```
 
-Adding a new scene is "new script + new view that calls `store.loadScript(...)` + `useSceneTransition()`" — no engine code changes. Choices, affinity deltas, audio, and routing all live in the data.
+Adding a new scene normally means adding a script, a route/view that calls `store.loadScript(...)`, and `useSceneTransition()`. Choices, affinity deltas, audio, and routing live in the script data.
+
+## Demo flow
+
+The current playable route sequence is:
+
+`/demo/arrival` -> `/demo/briefing` -> `/demo/hallway` -> `/demo/observation` -> `/demo/decision`
+
+The decision scene routes to `/rin-good-end` or `/rin-bad-end` based on accumulated affinity values. `/` opens the story library.
 
 ## Project setup
 
@@ -90,6 +103,8 @@ npm install
 ```sh
 npm run dev
 ```
+
+The dev server prints the local URL, usually `http://localhost:5173`.
 
 ### Build for production
 ```sh
@@ -114,6 +129,8 @@ npm run test:e2e
 npm run lint      # oxlint + eslint, both with --fix
 npm run format    # oxfmt on src/
 ```
+
+The project currently targets Node.js `22.18+` or `24.12+`.
 
 ## Roadmap
 

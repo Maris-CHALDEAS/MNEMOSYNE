@@ -1,7 +1,18 @@
 <script setup>
+import { useRouter } from 'vue-router'
+import { saveGameState } from '@/stores/save'
+
 // No dialogue — this is a pure end screen.
 // Drop your good-end background into @/assets/bg_good_end.webp
 import bgImg from '@/assets/Chaldea_HQ_outside.webp'
+
+const router = useRouter()
+const save = saveGameState()
+
+function returnToMenu() {
+  save.resetGame()
+  router.push('/')
+}
 </script>
 
 <style scoped>
@@ -47,6 +58,24 @@ import bgImg from '@/assets/Chaldea_HQ_outside.webp'
   color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
 }
+
+.menu-button {
+  margin-top: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  padding: 0.65rem 1rem;
+  background: rgba(0, 0, 0, 0.25);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.menu-button:hover,
+.menu-button:focus-visible {
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
+}
 </style>
 
 <template>
@@ -55,6 +84,7 @@ import bgImg from '@/assets/Chaldea_HQ_outside.webp'
     <div class="title-card">
       <span class="end-label">Good End</span>
       <span class="end-sub">Rin Route</span>
+      <button class="menu-button" type="button" @click="returnToMenu">Return to main menu</button>
     </div>
   </div>
 </template>
