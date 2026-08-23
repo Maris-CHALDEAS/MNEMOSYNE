@@ -6,7 +6,7 @@ import hallways from '@/assets/Chaldea_HQ_Hallway.webp'
 import outside from '@/assets/Chaldea_HQ_outside.webp'
 
 export default {
-    bgMusic: '/assets/bgms/bgm.mp3',
+    bgMusic: '/assets/bgms/bgm.flac',
     lines: [
         {
             speaker: 'Rin',

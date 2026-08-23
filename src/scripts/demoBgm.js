@@ -1,3 +1,3 @@
-import bgMusic from '@/assets/backgroundMusic/bgm.mp3'
+import bgMusic from '@/assets/backgroundMusic/bgm.flac'
 
 export default bgMusic

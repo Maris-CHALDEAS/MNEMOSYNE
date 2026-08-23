@@ -18,7 +18,7 @@ import DialogueBox from '@/components/DialogueBox.vue'
 import { useDialogueStore } from '@/stores/dialogue'
 import { useSceneTransition } from '@/composables/useSceneTransition'
 import { saveGameState } from '@/stores/save'
-import defaultBgm from '@/assets/backgroundMusic/bgm.mp3'
+import defaultBgm from '@/assets/backgroundMusic/bgm.flac'
 
 
 const props = defineProps({

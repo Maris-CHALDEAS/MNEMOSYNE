@@ -5,7 +5,7 @@ import characterNeutral from '@/assets/sprites/rin/rin-normal.png'
 import background from '@/assets/Chaldea_HQ_Hallway.webp'
 
 export default {
-    bgMusic: '/assets/bgms/bgm.mp3',
+    bgMusic: '/assets/bgms/bgm.flac',
     lines: [
         {
             speaker: 'Character',
