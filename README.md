@@ -41,7 +41,7 @@ src/
 │   ├── demoObservation.js
 │   └── demoDecision.js       # Calculates final affinity for the ending
 └── views/
-    ├── home/Home.vue         # story library
+    ├── home/Home.vue         # story library and story cards
     └── demo/
         ├── template.vue      # shared demo scene template
         └── scenes/            # demo scene views
@@ -83,7 +83,7 @@ export default {
 }
 ```
 
-Adding a new scene normally means adding a script, a route/view that calls `store.loadScript(...)`, and `useSceneTransition()`. Choices, affinity deltas, audio, and routing live in the script data.
+Adding a new scene normally means adding a script, a route/view under `views/<story>/scenes/` that calls `store.loadScript(...)`, and the story's `views/<story>/template.vue`. Choices, affinity deltas, audio, and routing live in the script data. The home page keeps its story cards in one `stories` array so new stories can be added without changing the card markup.
 
 ## Demo flow
 
