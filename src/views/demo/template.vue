@@ -18,10 +18,13 @@ import DialogueBox from '@/components/DialogueBox.vue'
 import { useDialogueStore } from '@/stores/dialogue'
 import { useSceneTransition } from '@/composables/useSceneTransition'
 import { saveGameState } from '@/stores/save'
+import defaultBgm from '@/assets/backgroundMusic/bgm.mp3'
+
 
 const props = defineProps({
     script: { type: Object, required: true },
     scriptId: { type: String, required: true },
+    bgm: { type: String, default: defaultBgm },
 })
 
 const save = saveGameState()
@@ -29,10 +32,11 @@ const store = useDialogueStore()
 const currentBg = ref(props.script.lines[0]?.background ?? null)
 const currentSprite = ref(null)
 const currentSpritePos = ref('')
+const music = props.script.bgMusic ?? props.bgm
 
 // Load before mounting DialogueBox so scene-level values such as bgMusic
 // are already available to shared components.
-store.loadScript(props.scriptId, props.script)
+store.loadScript(props.scriptId, {...props.script, bgMusic: music})
 store.lineIndex = save.lineIndex
 
 watch(() => store.currentLine, (line) => {

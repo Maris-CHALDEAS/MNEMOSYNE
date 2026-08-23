@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-
+import { gameAudio } from '@/composables/bgmManager'
 export const saveGameState = defineStore('save', {
     state: () => ({
         sceneState: null,
@@ -45,6 +45,7 @@ export const saveGameState = defineStore('save', {
         },
         resetGame() {
             localStorage.removeItem("mnemosyne-save");
+            gameAudio.stop();
             this.$reset();
         }
     }

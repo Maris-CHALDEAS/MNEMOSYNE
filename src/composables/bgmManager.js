@@ -4,9 +4,12 @@ class GameAudioEngine {
         this.ctx = null;
         this.audioBuffer = null;
         this.sourceNode = null;
+        this.currentMusic = null;
     }
 
     async loadMusic(url) {
+        if ( !url || (url === this.currentMusic && !this.isPaused)) return false;
+        this.currentMusic = url;
         if (!this.ctx) this.ctx = new this.AudioContext();
 
         const response = await fetch(url);
@@ -16,13 +19,14 @@ class GameAudioEngine {
         const arrayBuffer = await response.arrayBuffer();
 
         this.audioBuffer = await this.ctx.decodeAudioData(arrayBuffer);
+        return true;
     }
 
     async playBackgroundMusic() {
         if (!this.ctx || !this.audioBuffer) return;
         if (this.ctx.state === 'suspended') await this.ctx.resume();
 
-        this.stop();
+        this.stopSource();
 
         this.sourceNode = this.ctx.createBufferSource();
         this.sourceNode.buffer = this.audioBuffer;
@@ -45,13 +49,23 @@ class GameAudioEngine {
         return this.ctx?.state === 'suspended';
     }
 
-    stop() {
+    stopSource() {
         if (this.sourceNode) {
             this.sourceNode.stop();
             this.sourceNode.disconnect();
             this.sourceNode  = null;
         }
     }
+    stop() {
+        if (this.sourceNode) {
+            this.sourceNode.stop();
+            this.sourceNode.disconnect();
+            this.sourceNode  = null;
+        }
+        this.currentMusic = null
+        this.audioBuffer = null
+    }
 }
 
 export {GameAudioEngine};
+export const gameAudio = new GameAudioEngine();

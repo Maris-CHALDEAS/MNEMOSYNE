@@ -67,6 +67,7 @@
  import { useAffinityStore } from '@/stores/affinity'
  import ConfirmationModal from '@/components/ConfirmationModal.vue'
  import { GameAudioEngine } from '@/composables/bgmManager'
+ import { gameAudio } from '@/composables/bgmManager'
 
  const store = useDialogueStore()
  const line = computed(() => store.currentLine)
@@ -114,19 +115,21 @@
      { immediate: true }
  )
 
- const gameAudio = new GameAudioEngine();
- async function startMusic() {
+ async function startMusic(url) {
      try {
-         if (!bgMusic.value) return;
-         await gameAudio.loadMusic(bgMusic.value);
-         await gameAudio.playBackgroundMusic();
+         if (!url) return;
+         const changed = await gameAudio.loadMusic(url);
+         if (changed) {
+             await gameAudio.playBackgroundMusic();
+
+         }
      } catch (error) {
          console.log(error);
      }
  }
  function handleClick() {
      if (!firstClick && bgMusic.value) {
-         startMusic();
+         startMusic(bgMusic.value);
          firstClick = true;
      }
      if (isTyping) {
@@ -179,7 +182,6 @@
 
  onUnmounted(() => {
      clearInterval(timer)
-     gameAudio.stop()
  })
 </script>
 
