@@ -66,7 +66,7 @@ function startStory(story) {
 
     position: relative;
     isolation: isolate;
-    min-height: 100vh;
+    /* min-height: 100vh; */
     overflow-x: hidden;
     padding: 4.5rem 1.5rem 3rem;
     background: radial-gradient(ellipse at 50% -10%, #16233d 0%, #070b14 55%, #04060c 100%);
